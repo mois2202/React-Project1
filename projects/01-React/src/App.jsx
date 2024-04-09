@@ -1,35 +1,65 @@
+import { useImperativeHandle, useState } from 'react'
 import './App.css'
 
-
-const Turns = {
+const TURNS = {
   X: 'X',
   O: 'O'
 }
 
-const  board = Array(9).fill(null)
+const Square = ({children, isSelected, updateBoard, index}) => {
 
-function App() {
-return 
+  const classNameHandle = square`${isSelected ? 'is-selected' : ''}`
 
-<main className='board'>
-  <h1> La vieja </h1>
-<Section className='game'>
-{
-  board.map((_, index) => {
-    return (
-      <div className='Cell' key={index}>
-        <span className='cell__content'>
-          {index}
-        </span>
-      </div>
-
-    )
-  })
+  const handleClick = () => {
+    updateBoard(index)
+  }
+  return (
+    <div onClick={handleClick} className={classNameHandle}>
+      {children}
+    </div>
+  )
 }
 
+function App() {
+  const [board, setBoard] = useState(Array(9).fill(null))
 
-</Section>
-</main>
+  const [turn, setTurn] = useState(TURNS.X)
+
+  const updateBoard = () => {
+    const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
+    setTurn(newTurn)
+  }
+  return (
+    <main className='board'>
+      <h1> La vieja </h1>
+      <section className='game'>
+        {
+        board.map((_, index) => {
+          return (
+            <Square 
+            key={index} 
+            index={index}
+              updateBoard={updateBoard}>
+                {board[index]}
+            </Square>
+            )
+        }
+        )
+        }
+      </section>
+
+      <section className='turn'>
+        <Square isSelected = {turn === TURNS.X}>
+          {TURNS.X}
+        </Square>
+        <Square isSelected = {turn === TURNS.O}>
+            {TURNS.O}
+        </Square>
+
+      </section>
+    </main>
+  )
 }
 
 export default App
+
