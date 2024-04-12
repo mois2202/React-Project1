@@ -8,12 +8,11 @@ const TURNS = {
 
 const Square = ({children, isSelected, updateBoard, index}) => {
 
-  const classNameHandle = `square${isSelected ?'is-selected':''}`
   const handleClick = () => {
     updateBoard(index)
   }
   return (
-    <div onClick={handleClick} className = {classNameHandle}>
+    <div onClick={handleClick} className={isSelected !== false ? 'square is-selected' : 'square'}>
       {children}
     </div>
   )
@@ -25,7 +24,10 @@ function App() {
 
   const [turn, setTurn] = useState(TURNS.X)
 
-  const updateBoard = () => {
+  const updateBoard = (index) => {
+    const newBoard = [...board]
+    newBoard[index] = turn
+    setBoard(newBoard)
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
     setTurn(newTurn)
   }
@@ -49,7 +51,6 @@ function App() {
       </section>
 
       <section className='turn'>
-
         <Square isSelected={turn === TURNS.X}>
           {TURNS.X}
         </Square>
