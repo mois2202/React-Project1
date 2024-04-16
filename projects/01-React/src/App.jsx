@@ -1,34 +1,10 @@
-/**
- * Checks if there is a winner on the board.
- * @param {Array} board - The current state of the board.
- * @returns {string|null} - The symbol of the winner ('X' or 'O') or null if there is no winner yet.
- */
 import { useImperativeHandle, useState } from 'react'
 import './App.css'
-
-const TURNS = {
-  X: 'X',
-  O: 'O'
-}
-
-const Square = ({children, isSelected, updateBoard, index}) => {
-  
-  const handleClick = () => {
-    updateBoard(index)
-  }
-  return (
-    <div onClick={handleClick} className={isSelected !== false ? 'square is-selected' : 'square'}>
-      {children}
-    </div>
-  )
-}
-
-const winnerCombinations = [
-  [0, 1, 2], [3, 4, 5], [6, 7, 8], // Horizontal
-  [0, 3, 6], [1, 4, 7], [2, 5, 8], // Vertical
-  [0, 4, 8], [2, 4, 6] // Diagonal
-]
-
+import confetti from 'canvas-confetti'
+import Square from './components/Square.jsx'
+import {TURNS} from './components/constans.js'
+import {checkWinner, updateBoard, checkEndGame } from './logic/board.js'
+import { WinnerModal } from './components/WinnerModal.jsx'
 
 function App() {
 
@@ -39,48 +15,19 @@ function App() {
   const [turn, setTurn] = useState(TURNS.X)
 
   
-
-  const checkWinner = (board) => { 
-    for (const combination of winnerCombinations) {
-      const [a, b, c] = combination;
-      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-        return board[a];
-      }
-    }
-    return null;
-  }
-
-
-  const updateBoard = (index) => {
-    if (board[index] !== null || winner !== null) 
-    return
-    const newBoard = [...board]
-    newBoard[index] = turn
-    setBoard(newBoard)
-
-    const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
-    setTurn(newTurn)
-
-    const checkEndGame = (board) => {
-      return newBoard.every((cell) => cell !== null)
-    }
-
     const newWinner = checkWinner(newBoard)
     if (newWinner) {
+      confetti()
       setWinner(newWinner)
     } else if (checkEndGame(newBoard)) {
       setWinner(false)
     }
-  }
 
 const resetGame = () => { 
   setBoard(Array(9).fill(null))
   setWinner(null)
   setTurn(TURNS.X)
 }
-
-
-
 
   return (
     <main className='board'>
@@ -102,10 +49,6 @@ const resetGame = () => {
         }
       </section>
 
-
-
-
-
       <section className='turn'>
         <Square isSelected={turn === TURNS.X}>
           {TURNS.X}
@@ -114,33 +57,9 @@ const resetGame = () => {
         <Square isSelected={turn === TURNS.O}>
             {TURNS.O}
         </Square>
-
       </section>
 
-      <section>
-       {winner != null && (
-
-      <section className='winner'>
-          <div className='text'> 
-            <h2>
-              {winner === false ? 'Empate':'El Ganador es:'} 
-            </h2> 
-
-            <header className='win'> 
-              {winner && <Square>{winner}</Square>}
-            </header>
-
-            <footer>
-              <buttom onClick={resetGame}>Empezar de nuevo</buttom>
-            </footer>
-
-          </div>
-      </section>
-)} 
-
-
-      </section>
-
+      <WinnerModal winner={winner} resetGame={resetGame} />
     </main>
   )
 }
