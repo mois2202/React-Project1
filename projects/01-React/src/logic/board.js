@@ -1,25 +1,18 @@
-import {winnerCombinations} from '..components/constants.js';
+import { WINNER_COMBOS } from '../components/constants.js'
 
-export const checkWinner = (board) => { 
-    for (const combination of winnerCombinations) {
+
+export function checkWinner (boardToCheck) { 
+    for (const combination of WINNER_COMBOS) {
       const [a, b, c] = combination;
-      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-        return board[a];
+      if (boardToCheck[a] && 
+        boardToCheck[a] === boardToCheck[b] && 
+        boardToCheck[a] === boardToCheck[c]) {
+        return boardToCheck[a];
       }
     }
     return null;
   }
 
-  export const updateBoard = (index) => {
-    if (board[index] !== null || winner !== null) 
-    return
-    const newBoard = [...board]
-    newBoard[index] = turn
-    setBoard(newBoard)
-
-    const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
-    setTurn(newTurn)
-
-    const checkEndGame = (board) => {
-      return newBoard.every((cell) => cell !== null)
-    }
+  export function checkEndGame (boardToCheck) {
+    return boardToCheck.every((cell) => cell !== null)
+  } 

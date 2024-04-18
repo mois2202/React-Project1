@@ -2,9 +2,10 @@ import { useImperativeHandle, useState } from 'react'
 import './App.css'
 import confetti from 'canvas-confetti'
 import Square from './components/Square.jsx'
-import {TURNS} from './components/constans.js'
-import {checkWinner, updateBoard, checkEndGame } from './logic/board.js'
+import {checkWinner, checkEndGame } from './logic/board.js'
 import { WinnerModal } from './components/WinnerModal.jsx'
+
+
 
 function App() {
 
@@ -14,6 +15,12 @@ function App() {
 
   const [turn, setTurn] = useState(TURNS.X)
 
+
+const TURNS = {
+    X: 'X',
+    O: 'O'
+  }
+  
   
     const newWinner = checkWinner(newBoard)
     if (newWinner) {
@@ -21,6 +28,17 @@ function App() {
       setWinner(newWinner)
     } else if (checkEndGame(newBoard)) {
       setWinner(false)
+    }
+
+    const updateBoard = (index) => {
+      if (board[index] !== null || winner !== null) 
+      return
+      const newBoard = [...board]
+      newBoard[index] = turn
+      setBoard(newBoard)
+  
+      const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
+      setTurn(newTurn)
     }
 
 const resetGame = () => { 
